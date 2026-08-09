@@ -1,41 +1,53 @@
+# F1 Race Strategy Predictor
 
-# 🏎️ F1 Race Strategy Predictor
+> Uma aplicação Full-Stack de Machine Learning para prever a degradação dos pneus e as janelas ideais de pit stop usando dados de telemetria da Fórmula 1.
 
-> Uma aplicação Full-Stack de Machine Learning para prever o desgaste de pneus e as janelas ideais de pit stop usando dados de telemetria da Fórmula 1.
+## O Projeto
 
-## 📌 O Projeto
-Na Fórmula 1, o momento exato de um pit stop pode ser a diferença entre vencer uma corrida e terminar fora da zona de pontuação. A degradação dos pneus (o famoso "cliff") é um fenômeno complexo influenciado pela temperatura da pista, idade do composto e estilo de pilotagem.
+Na Fórmula 1, o momento exato de um pit stop pode ser a diferença entre vencer uma corrida ou terminar fora da zona de pontuação. A degradação dos pneus (o "cliff") é um fenômeno complexo influenciado pela temperatura da pista, idade do composto e estilo de pilotagem.
 
-Este projeto tem como objetivo construir um modelo preditivo de Machine Learning que consome dados reais de telemetria e prevê a janela ideal para a troca de pneus. Os insights são disponibilizados através de um dashboard web moderno e interativo, permitindo visualizar os dados e as previsões em tempo real.
+Este projeto tem como objetivo construir um modelo preditivo de Machine Learning que consome dados reais de telemetria e prevê a janela ideal para a troca de pneus. Na transição de scripts analíticos estáticos para uma arquitetura pronta para produção, os insights são gerados em memória e serão disponibilizados por meio de um dashboard web moderno e interativo, permitindo aos usuários visualizar dados e previsões em tempo real.
 
-## 🚀 Principais Funcionalidades
-* **Pipeline de Extração de Dados:** Coleta automatizada de dados históricos de corridas e telemetria usando a API `FastF1`.
-* **Engenharia de Atributos (Feature Engineering):** Cálculo de médias móveis, idade dos pneus e deltas de tempo de volta para alimentar o modelo.
-* **Motor de Machine Learning:** Modelagem preditiva (métodos de Ensemble/XGBoost) para classificar e prever quedas de desempenho.
-* **Dashboard Interativo:** Uma interface de usuário dinâmica para selecionar pilotos, circuitos e visualizar gráficos de telemetria lado a lado com as previsões da IA.
+## Principais Funcionalidades
 
-## 🛠️ Tecnologias Utilizadas
-Este projeto foi construído com uma arquitetura desacoplada, separando o motor de IA da interface do usuário:
+*   **Pipeline de Dados Dinâmico:** Extração automatizada e dinâmica de telemetria histórica de corridas usando a API `FastF1`. O pipeline inclui um tratamento de esquema resiliente para mapear dinamicamente os compostos de pneus (Macio, Médio, Duro, Intermediário, Chuva), independentemente do uso específico em cada corrida.
+*   **Motor de ML em Memória:** Modelagem preditiva utilizando **Regressão AdaBoost** para prever quedas de desempenho dos pneus. A arquitetura de backend treina os modelos sob demanda (*on-the-fly*) na memória RAM, eliminando gargalos de I/O de disco (dependências de `.pkl`) para respostas instantâneas da API.
+*   **Simulação de Estratégia e Detecção de Cliff:** Detecção algorítmica de janelas ideais de pit stop usando um "Período de Tolerância" (*Grace Period*) calculado para filtrar o ruído inicial da telemetria (ex: tanque cheio, tráfego) e identificar com precisão o verdadeiro ponto de degradação (*cliff*) do pneu.
+*   **Dashboard Interativo (WIP - Em Desenvolvimento):** Uma interface de usuário dinâmica para selecionar pilotos, circuitos e visualizar gráficos de telemetria junto com as previsões de ML.
 
-**Machine Learning e Dados**
-* **Python:** Linguagem principal para processamento de dados.
-* **FastF1 e Pandas:** Extração e manipulação dos dados brutos.
-* **Scikit-Learn:** Treinamento, avaliação e ajuste de hiperparâmetros do modelo.
+## Stack de Tecnologia
 
-**Back-end (API e Banco de Dados)**
-* **Flask / FastAPI:** API RESTful para servir as previsões e os dados de telemetria.
-* **SQL:** Gerenciamento de banco de dados relacional para armazenar o histórico de corridas processado.
+Este projeto é construído com uma arquitetura desacoplada, separando o motor de Machine Learning da interface de usuário:
 
-**Front-end**
-* **React:** Desenvolvimento da interface baseada em componentes.
-* **TypeScript:** Tipagem estática para um código escalável e livre de bugs.
-* **Recharts / Chart.js:** Renderização de gráficos complexos de telemetria.
+**Machine Learning & Dados (Core Backend)**
+*   **Python:** Linguagem principal para processamento de dados e orquestração do pipeline.
+*   **FastF1 & Pandas:** Extração dinâmica, limpeza e manipulação de dados.
+*   **Scikit-Learn:** Treinamento do modelo (AdaBoost), avaliação e ajuste de hiperparâmetros.
 
-## 📂 Estrutura do Projeto
+**API & Banco de Dados (Planejado)**
+*   **Flask / FastAPI:** API RESTful para servir previsões em tempo real e dados de telemetria.
+*   **SQL:** Gerenciamento de banco de dados relacional para armazenar dados processados de corridas e execexecuções históricas.
+
+**Frontend (Planejado)**
+*   **React:** Desenvolvimento de UI baseada em componentes.
+*   **TypeScript:** Tipagem estática para código escalável e livre de bugs.
+*   **Recharts / Chart.js:** Renderização de gráficos complexos de telemetria.
+
+## 📁 Estrutura do Projeto
+
 ```text
 f1-strategy-predictor/
-├── data/               # Datasets brutos e processados (ignorados no git)
-├── notebooks/          # Jupyter notebooks para análise exploratória e prototipagem
-├── backend/            # API em Python, modelos de ML e conexões SQL
-├── frontend/           # Aplicação do dashboard em React + TypeScript
+├── backend/
+│   ├── data_pipeline.py       # Extração dinâmica do FastF1 e engenharia de features
+│   ├── model_pipeline.py      # Módulo de treinamento AdaBoost em memória
+│   └── api/                   # (WIP) Rotas Flask/FastAPI
+├── notebooks/                 # Notebooks Jupyter para EDA inicial e prototipagem
+├── frontend/                  # Aplicação de dashboard em React + TypeScript
 └── README.md
+
+```
+## Desenvolvido por Guilherme de Araújo Moreira
+
+### Apaixonado por Engenharia de Software, Inteligência Artificial, Arquitetura de Dados e Design de Algoritmos.
+
+* LinkedIn: www.linkedin.com/in/guilherme-de-araùjo-moreira-7440602b5
