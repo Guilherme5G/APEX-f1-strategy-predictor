@@ -28,3 +28,35 @@ def extrair_telemetria_piloto(ano, gp, piloto):
             dados_modeloML[composto] = 0
             
     return dados_modeloML
+
+
+def carregar_lote_treinamento(ano, lista_gps, lista_pilotos):
+    todas_voltas = []
+
+    for gp in lista_gps:
+        try:
+            session = fastf1.get_session(ano, gp, 'R')
+            session.load(telemetry=False, weather=False)
+
+            voltas = session.laps.pick_drivers(lista_pilotos).pick_accurate()
+
+            df_gp = voltas[['LapNumber', 'Stint', 'Compound', 'TyreLife', 'LapTime']].copy()
+            df_gp['LapTime'] = df_gp['LapTime'].dt.total_seconds()
+
+            df_gp['EventName'] = session.event['EventName']
+            df_gp['Driver'] = voltas['Driver']
+
+            tempo_minimo = df_gp['LapTime'].min()
+            df_gp = df_gp[df_gp['LapTime'] <= tempo_minimo * 1.10]
+
+            todas_voltas.append(df_gp)
+            print(f"Extracao OK: {gp}")
+
+        except Exception as e:
+            print(f"Erro ao extrair dados do GP {gp}: {e}")
+            continue
+
+    df_modeloML = pd.concat(todas_voltas, ignore_index=True)
+    df_modeloML = pd.get_dummies(df_modeloML, columns=['Compound', 'EventName', 'Driver'], dtype=int)
+
+    return df_modeloML
