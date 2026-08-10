@@ -32,7 +32,7 @@ def extrair_telemetria_piloto(ano, gp, piloto):
     return dados_modeloML
 
 
-def carregar_lote_treinamento(ano, lista_gps, lista_pilotos):
+def carregar_lote_treinamento(ano, lista_gps, lista_pilotos, retornar_grupos=False):
     todas_voltas = []
 
     for gp in lista_gps:
@@ -63,6 +63,12 @@ def carregar_lote_treinamento(ano, lista_gps, lista_pilotos):
             continue
 
     df_modeloML = pd.concat(todas_voltas, ignore_index=True)
+
+    grupos = df_modeloML['EventName'].copy()
+
     df_modeloML = pd.get_dummies(df_modeloML, columns=['Compound', 'EventName', 'Driver'], dtype=int)
+
+    if retornar_grupos:
+        return df_modeloML, grupos
 
     return df_modeloML
