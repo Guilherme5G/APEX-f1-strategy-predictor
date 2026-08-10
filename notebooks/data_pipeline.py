@@ -11,8 +11,10 @@ def extrair_telemetria_piloto(ano, gp, piloto):
     session = fastf1.get_session(ano, gp, 'R')
     session.load(telemetry=False, weather=False) 
     
-    voltas_piloto = session.laps.pick_drivers(piloto).pick_accurate() 
-    
+    voltas_piloto = session.laps.pick_drivers(piloto).pick_accurate()
+    # remove voltas com Safety Car / VSC / bandeira vermelha (so mantem pista 100% verde)
+    voltas_piloto = voltas_piloto[voltas_piloto['TrackStatus'] == '1']
+
     dados_modeloML = voltas_piloto[['LapNumber', 'Stint', 'Compound', 'TyreLife', 'LapTime']].copy()
     dados_modeloML['LapTime'] = dados_modeloML['LapTime'].dt.total_seconds()
     
@@ -39,6 +41,8 @@ def carregar_lote_treinamento(ano, lista_gps, lista_pilotos):
             session.load(telemetry=False, weather=False)
 
             voltas = session.laps.pick_drivers(lista_pilotos).pick_accurate()
+            # remove voltas com Safety Car / VSC / bandeira vermelha
+            voltas = voltas[voltas['TrackStatus'] == '1']
 
             df_gp = voltas[['LapNumber', 'Stint', 'Compound', 'TyreLife', 'LapTime']].copy()
             df_gp['LapTime'] = df_gp['LapTime'].dt.total_seconds()
@@ -48,6 +52,8 @@ def carregar_lote_treinamento(ano, lista_gps, lista_pilotos):
 
             tempo_minimo = df_gp['LapTime'].min()
             df_gp = df_gp[df_gp['LapTime'] <= tempo_minimo * 1.10]
+
+            df_gp = df_gp[df_gp['LapNumber'] > 1]
 
             todas_voltas.append(df_gp)
             print(f"Extracao OK: {gp}")
