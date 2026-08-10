@@ -66,6 +66,10 @@ def carregar_lote_treinamento(ano, lista_gps, lista_pilotos, retornar_grupos=Fal
 
     grupos = df_modeloML['EventName'].copy()
 
+    df_modeloML['LapTime_Normalizado'] = df_modeloML.groupby(
+        ['EventName', 'Driver', 'Stint']
+    )['LapTime'].transform(lambda x: x - x.min())
+
     df_modeloML = pd.get_dummies(df_modeloML, columns=['Compound', 'EventName', 'Driver'], dtype=int)
 
     if retornar_grupos:
