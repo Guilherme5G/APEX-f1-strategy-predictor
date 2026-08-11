@@ -1,5 +1,9 @@
 # F1 Race Strategy Predictor
 
+> **⚠️ Project Status: Paused**
+> 
+> *Active development on the F1 Race Strategy Predictor is currently on hold. While the initial data extraction pipelines and Machine Learning engine are functional, I plan to revisit and completely update the core Machine Learning approaches in the future to improve predictive accuracy. The implementation of the API and Frontend architectures has also been postponed. This repository remains open as a reference for the foundational backend and algorithmic work done so far.*
+
 > A Full-Stack Machine Learning application to predict tire degradation and optimal pit stop windows using Formula 1 telemetry data.
 
 ## The Project
